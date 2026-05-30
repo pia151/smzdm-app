@@ -194,3 +194,93 @@ export const ELITE_MAP: Record<number, string> = {
   10: '大额券商品',
   13: '秒杀商品',
 };
+
+/**
+ * 通用的京东开放平台 API 调用
+ * 兼容多种参数格式，自动处理签名
+ */
+export async function jdApiV2<T = any>(
+  method: string,
+  bizParams: Record<string, any> = {},
+  options: { pageNo?: number; pageSize?: number } = {}
+): Promise<T> {
+  if (!JD_APP_KEY || !JD_APP_SECRET) {
+    throw new Error('京东联盟 API 密钥未配置，请在 .env 中设置 JD_APP_KEY 和 JD_APP_SECRET');
+  }
+
+  // 有些接口参数需要合并 pageNo/pageSize
+  const finalBiz = { ...bizParams };
+  if (options.pageNo) finalBiz.pageNo = options.pageNo;
+  if (options.pageSize) finalBiz.pageSize = options.pageSize;
+
+  const timestamp = new Date().toISOString().replace(/T/, ' ').replace(/\.\d{3}Z$/, '');
+
+  const systemParams: Record<string, string> = {
+    method,
+    app_key: JD_APP_KEY,
+    timestamp,
+    format: 'json',
+    v: '1.0',
+    sign_method: 'md5',
+  };
+
+  const paramJson = JSON.stringify(finalBiz);
+
+  const allParams: Record<string, string> = {
+    ...systemParams,
+    param_json: paramJson,
+  };
+
+  const sign = generateSign(allParams);
+  allParams.sign = sign;
+
+  const formBody = Object.entries(allParams)
+    .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+    .join('&');
+
+  const response = await fetch(JD_GATEWAY, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: formBody,
+  });
+
+  const text = await response.text();
+  try {
+    const data = JSON.parse(text);
+
+    const responseKey = `${method.replace(/\./g, '_')}_response`;
+    const altResponseKey = `${method.replace(/\./g, '_')}_responce`;
+
+    if (data.error_response) {
+      throw new Error(`京东 API 错误: ${data.error_response.code} - ${data.error_response.zh_desc || data.error_response.msg}`);
+    }
+
+    const result = data[responseKey] || data[altResponseKey];
+    if (!result) {
+      throw new Error(`京东 API 返回格式异常: ${text.slice(0, 200)}`);
+    }
+
+    // 处理 queryResult (jingfen)
+    if (result.queryResult) {
+      const inner = JSON.parse(result.queryResult);
+      if (inner.code !== 0 && inner.code !== 200) {
+        throw new Error(`京东联盟业务错误: ${inner.message || inner.msg || inner.code}`);
+      }
+      return inner.data || inner;
+    }
+
+    // 处理 getResult (promotion)
+    if (result.getResult) {
+      const inner = JSON.parse(result.getResult);
+      if (inner.code !== 0 && inner.code !== 200) {
+        throw new Error(`京东联盟业务错误: ${inner.message || inner.msg || inner.code}`);
+      }
+      return inner.data || inner;
+    }
+
+    return result;
+  } catch (e: any) {
+    if (e.message?.startsWith('京东')) throw e;
+    throw new Error(`京东 API 解析失败: ${text.slice(0, 200)}`);
+  }
+}
