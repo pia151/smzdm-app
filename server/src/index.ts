@@ -12,7 +12,8 @@ import categoriesRoutes from './routes/categories';
 import productsRoutes from './routes/products';
 import favoritesRoutes from './routes/favorites';
 import commentsRoutes from './routes/comments';
-import { authMiddleware, AuthRequest } from './middleware/auth';
+import jdRoutes from './routes/jd';
+import { AuthRequest, authMiddleware } from './middleware/auth';
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3001;
@@ -29,6 +30,7 @@ app.use('/api/categories', categoriesRoutes);
 app.use('/api/products', productsRoutes);
 app.use('/api/favorites', authMiddleware, favoritesRoutes);
 app.use('/api/comments', commentsRoutes);
+app.use('/api/jd', jdRoutes);
 
 // 仪表盘统计
 app.get('/api/stats', async (_req, res) => {

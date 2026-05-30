@@ -8,6 +8,8 @@ import Favorites from './pages/Favorites';
 import Submit from './pages/Submit';
 import ProductDetail from './pages/ProductDetail';
 import Search from './pages/Search';
+import JdGoods from './pages/JdGoods';
+import JdDetail from './pages/JdDetail';
 
 export default function App() {
   return (
@@ -21,6 +23,8 @@ export default function App() {
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/submit" element={<Submit />} />
         <Route path="/search" element={<Search />} />
+        <Route path="/jd" element={<JdGoods />} />
+        <Route path="/jd/:skuId" element={<JdDetail />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

@@ -72,6 +72,27 @@ export const api = {
       body: JSON.stringify({ content, parent_id: parentId }),
     }),
 
+  // 京东联盟
+  getJdJingfen: (eliteId?: string, page?: string, pageSize?: string) => {
+    const params: Record<string, string> = {};
+    if (eliteId) params.eliteId = eliteId;
+    if (page) params.page = page;
+    if (pageSize) params.pageSize = pageSize;
+    const search = '?' + new URLSearchParams(params).toString();
+    return request(`/jd/jingfen${search}`);
+  },
+  getJdSearch: (keyword: string, page?: string) => {
+    const params: Record<string, string> = { keyword };
+    if (page) params.page = page;
+    const search = '?' + new URLSearchParams(params).toString();
+    return request(`/jd/search${search}`);
+  },
+  getJdDetail: (skuId: string) => request(`/jd/detail/${skuId}`),
+  getJdPromotion: (data: { materialId: string; positionId?: number }) =>
+    request('/jd/promotion', { method: 'POST', body: JSON.stringify(data) }),
+  getJdCategories: () => request('/jd/categories'),
+  syncJdGoods: () => request('/jd/sync', { method: 'POST' }),
+
   // 统计
   getStats: () => request('/stats'),
 };

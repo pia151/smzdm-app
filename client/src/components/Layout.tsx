@@ -2,7 +2,7 @@ import { Outlet, Link, useLocation } from 'react-router-dom';
 
 const navItems = [
   { path: '/', label: '首页', icon: '🏠' },
-  { path: '/search', label: '搜索', icon: '🔍' },
+  { path: '/jd', label: '京东', icon: '🛒' },
   { path: '/submit', label: '爆料', icon: '✏️' },
   { path: '/favorites', label: '收藏', icon: '⭐' },
   { path: '/profile', label: '我的', icon: '👤' },
