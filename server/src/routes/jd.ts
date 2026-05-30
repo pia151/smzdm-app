@@ -23,8 +23,11 @@ router.get('/jingfen', async (req: AuthRequest, res: Response) => {
       Number(pageSize)
     );
 
-    // 格式化返回数据
-    const goods = (data?.data?.list || data?.list || []).map((item: any) => {
+    // 新版 API 数据格式: data -> data -> result
+    const goodsList = data?.result || data?.data || data?.list || [];
+    // 兼容新版: jd.union.open.goods.query 返回 { data: { result: [...] } }
+    const goodsArray = Array.isArray(goodsList) ? goodsList : (goodsList.result || []);
+    const goods = goodsArray.map((item: any) => {
       const info = item.goodsInfo || item;
       return {
         skuId: info.skuId || info.skuIdStr,
@@ -66,7 +69,9 @@ router.get('/search', async (req: AuthRequest, res: Response) => {
     }
 
     const data = await searchGoods(String(keyword), Number(page), Number(pageSize));
-    const goods = (data?.data?.list || data?.list || []).map((item: any) => {
+    const goodsList = data?.result || data?.data || data?.list || [];
+    const goodsArray = Array.isArray(goodsList) ? goodsList : (goodsList.result || []);
+    const goods = goodsArray.map((item: any) => {
       const info = item.goodsInfo || item;
       return {
         skuId: info.skuId || info.skuIdStr,

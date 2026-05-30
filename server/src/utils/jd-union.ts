@@ -110,8 +110,9 @@ export async function jdApi<T = any>(
 // ========================================
 
 /**
- * 精选商品查询 (jd.union.open.goods.jingfen.query)
- * 获取京东精选推荐商品，包含佣金信息
+ * 精选商品查询 - 京东精选推荐好价
+ * 使用 jd.union.open.goods.query + 精选参数
+ * 注意: 需要在京东联盟后台开通 API 权限
  */
 export async function queryJingfenGoods(
   eliteId: number = 1,
@@ -120,11 +121,18 @@ export async function queryJingfenGoods(
   sortName?: string,
   sort?: string
 ): Promise<any> {
-  return jdApi('jd.union.open.goods.jingfen.query', {
-    eliteId,
-    sortName: sortName || 'price',
-    sort: sort || 'desc',
-  }, { pageNo, pageSize });
+  // 新版 API 用 goodsReq 嵌套对象传递参数
+  return jdApiV2('jd.union.open.goods.query', {
+    goodsReq: {
+      pageIndex: pageNo,
+      pageSize,
+      isCouponOnly: 0,
+      isPG: 0,
+      sortName: sortName || 'inOrderCountDesc',
+      sort: sort || 'desc',
+      fields: 'skuName,skuId,price,imageInfo,couponInfo,commissionInfo,shopInfo,shareInfo,owner,exPrice,scoreInfo,inOrderCount30Days',
+    }
+  });
 }
 
 /**
@@ -135,17 +143,24 @@ export async function searchGoods(
   pageNo: number = 1,
   pageSize: number = 20
 ): Promise<any> {
-  return jdApi('jd.union.open.goods.query', {
-    keyword,
-  }, { pageNo, pageSize });
+  return jdApiV2('jd.union.open.goods.query', {
+    goodsReq: {
+      keyword,
+      pageIndex: pageNo,
+      pageSize,
+      fields: 'skuName,skuId,price,imageInfo,couponInfo,commissionInfo,shopInfo,shareInfo,owner,inOrderCount30Days',
+    }
+  });
 }
 
 /**
  * 商品详情查询 (jd.union.open.goods.promotiongoodsinfo.query)
  */
 export async function queryGoodsInfo(skuIds: string[]): Promise<any> {
-  return jdApi('jd.union.open.goods.promotiongoodsinfo.query', {
-    skuIds,
+  return jdApiV2('jd.union.open.goods.promotiongoodsinfo.query', {
+    goodsReq: {
+      skuIds,
+    }
   });
 }
 
@@ -159,21 +174,27 @@ export async function getPromotionUrl(
   couponUrl?: string,
   subPositionId?: string
 ): Promise<any> {
-  return jdApi('jd.union.open.promotion.common.get', {
-    materialId,
-    positionId: positionId || 0,
-    couponUrl: couponUrl || '',
-    subPositionId: subPositionId || '',
+  return jdApiV2('jd.union.open.promotion.common.get', {
+    promotionCodeReq: {
+      materialId,
+      siteId: '',  // 推广位ID, 可选
+      positionId: positionId || 0,
+      couponUrl: couponUrl || '',
+      subUnionId: subPositionId || '',
+    }
   });
+
 }
 
 /**
- * 获取联盟分类列表 (jd.union.open.category.list.get)
+ * 获取联盟分类列表 (jd.union.open.category.goods.get)
  */
-export async function getCategoryList(parentId: number = 0, level: number = 1): Promise<any> {
-  return jdApi('jd.union.open.category.list.get', {
-    parentId,
-    grade: level,
+export async function getCategoryList(parentId: number = 0): Promise<any> {
+  return jdApiV2('jd.union.open.category.goods.get', {
+    req: {
+      parentId,
+      grade: parentId === 0 ? 1 : 0,
+    }
   });
 }
 
