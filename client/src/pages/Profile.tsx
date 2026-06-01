@@ -24,7 +24,7 @@ export default function Profile() {
         <p className="text-gray-500 mb-4">登录后查看个人中心</p>
         <Link
           to="/login"
-          className="inline-block bg-gradient-to-r from-red-500 to-orange-500 text-white px-8 py-2.5 rounded-full text-sm"
+          className="inline-block bg-[#FF6A00] text-white px-8 py-2.5 rounded-full text-sm"
         >
           去登录
         </Link>
@@ -34,8 +34,7 @@ export default function Profile() {
 
   return (
     <div>
-      {/* 头部 */}
-      <div className="bg-gradient-to-r from-red-500 to-orange-500 px-4 pt-8 pb-12">
+      <div className="bg-[#FF6A00] px-4 pt-8 pb-12">
         <div className="flex items-center gap-4">
           <img
             src={user.avatar || ''}
@@ -49,7 +48,6 @@ export default function Profile() {
         </div>
       </div>
 
-      {/* 统计卡片 */}
       <div className="bg-white rounded-xl mx-4 -mt-6 shadow-sm overflow-hidden">
         <div className="flex divide-x divide-gray-100">
           <div className="flex-1 py-4 text-center">
@@ -67,7 +65,6 @@ export default function Profile() {
         </div>
       </div>
 
-      {/* 功能菜单 */}
       <div className="mt-4 mx-3">
         <div className="bg-white rounded-lg">
           <Link to="/favorites" className="flex items-center justify-between px-4 py-3.5 border-b border-gray-50">
@@ -78,6 +75,10 @@ export default function Profile() {
             <span className="text-sm text-gray-800">✏️ 我的爆料</span>
             <span className="text-gray-300">→</span>
           </Link>
+          <Link to="/sync" className="flex items-center justify-between px-4 py-3.5 border-b border-gray-50">
+            <span className="text-sm text-gray-800">🔄 数据同步</span>
+            <span className="text-gray-300">→</span>
+          </Link>
           <div className="flex items-center justify-between px-4 py-3.5">
             <span className="text-sm text-gray-800">📱 版本信息</span>
             <span className="text-xs text-gray-400">v1.0.0</span>
@@ -85,7 +86,6 @@ export default function Profile() {
         </div>
       </div>
 
-      {/* 退出登录 */}
       <div className="mt-6 mx-3 mb-8">
         <button
           onClick={() => { logout(); navigate('/'); }}

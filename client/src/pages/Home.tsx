@@ -73,32 +73,35 @@ export default function Home() {
 
   return (
     <div>
-      {/* 顶部横幅 */}
-      <div className="bg-gradient-to-r from-red-500 to-orange-500 px-4 pt-3 pb-5">
-        <div className="flex items-center justify-between mb-3">
-          <h1 className="text-xl font-bold text-white">值得买</h1>
-          <Link to="/search" className="text-white/80 text-sm">🔍 搜索好价</Link>
+      {/* 顶部品牌区 */}
+      <div className="bg-[#FF6A00] px-4 pt-3 pb-5">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl font-bold text-white">值否</h1>
+            <span className="text-[10px] bg-white/20 text-white/90 px-2 py-0.5 rounded-full">好价由你判断</span>
+          </div>
+          <Link to="/search" className="text-white/80 text-sm">🔍</Link>
         </div>
         {/* 数据概览 */}
-        <div className="flex gap-4 text-white/90 text-xs">
-          <span>今日好价 {stats.today_deals} 条</span>
-          <span>累计 {stats.total_deals} 条</span>
+        <div className="flex gap-4 text-white/80 text-xs mt-1">
+          <span>今日 <strong className="text-white">{stats.today_deals}</strong> 条</span>
+          <span>累计 <strong className="text-white">{stats.total_deals}</strong> 条</span>
         </div>
       </div>
 
-      {/* 分类导航 (横向滚动) */}
+      {/* 分类导航 + 排序 */}
       <div className="bg-white border-b border-gray-100 sticky top-0 z-40 shadow-sm">
         {/* 排序tab */}
         <div className="flex items-center px-3 py-2 border-b border-gray-50">
           <button
             onClick={() => setSort('new')}
-            className={`text-sm px-3 py-1 rounded-full mr-2 ${sort === 'new' ? 'bg-red-500 text-white' : 'text-gray-500'}`}
+            className={`text-sm px-3 py-1 rounded-full mr-2 ${sort === 'new' ? 'bg-[#FF6A00] text-white' : 'text-gray-500'}`}
           >
             最新
           </button>
           <button
             onClick={() => setSort('hot')}
-            className={`text-sm px-3 py-1 rounded-full ${sort === 'hot' ? 'bg-red-500 text-white' : 'text-gray-500'}`}
+            className={`text-sm px-3 py-1 rounded-full ${sort === 'hot' ? 'bg-[#FF6A00] text-white' : 'text-gray-500'}`}
           >
             最热
           </button>
@@ -111,7 +114,7 @@ export default function Home() {
             <button
               onClick={() => setActiveCategory(null)}
               className={`text-xs px-3 py-1.5 rounded-full flex-shrink-0 ${
-                activeCategory === null ? 'bg-red-50 text-red-500 border border-red-200' : 'bg-gray-50 text-gray-600 border border-gray-100'
+                activeCategory === null ? 'bg-[#FFF0E0] text-[#FF6A00] border border-[#FFD6A0]' : 'bg-white text-gray-600 border border-gray-100'
               }`}
             >
               全部
@@ -121,7 +124,7 @@ export default function Home() {
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
                 className={`text-xs px-3 py-1.5 rounded-full flex-shrink-0 ${
-                  activeCategory === cat.id ? 'bg-red-50 text-red-500 border border-red-200' : 'bg-gray-50 text-gray-600 border border-gray-100'
+                  activeCategory === cat.id ? 'bg-[#FFF0E0] text-[#FF6A00] border border-[#FFD6A0]' : 'bg-white text-gray-600 border border-gray-100'
                 }`}
               >
                 {cat.icon} {cat.name}
@@ -139,14 +142,14 @@ export default function Home() {
 
         {loading && (
           <div className="flex justify-center py-6">
-            <div className="animate-spin rounded-full h-6 w-6 border-2 border-red-500 border-t-transparent" />
+            <div className="animate-spin rounded-full h-6 w-6 border-2 border-[#FF6A00] border-t-transparent" />
           </div>
         )}
 
         {!loading && hasMore && (
           <button
             onClick={loadMore}
-            className="w-full py-3 text-sm text-red-500 font-medium"
+            className="w-full py-3 text-sm text-[#FF6A00] font-medium"
           >
             加载更多
           </button>
@@ -160,7 +163,7 @@ export default function Home() {
           <div className="text-center py-10 text-gray-400">
             <p className="text-4xl mb-3">🔍</p>
             <p>这里还没有好价</p>
-            <Link to="/submit" className="text-red-500 text-sm mt-2 inline-block">去爆料 →</Link>
+            <Link to="/submit" className="text-[#FF6A00] text-sm mt-2 inline-block">去爆料 →</Link>
           </div>
         )}
       </div>

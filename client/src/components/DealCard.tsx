@@ -19,12 +19,12 @@ export default function DealCard({ deal, onFavorite }: DealCardProps) {
   return (
     <Link
       to={`/deal/${deal.id}`}
-      className="block bg-white rounded-lg mb-3 mx-3 overflow-hidden shadow-sm active:scale-[0.98] transition-transform"
+      className="block bg-white rounded-lg mb-3 mx-3 overflow-hidden shadow-sm border border-gray-100 active:scale-[0.98] transition-transform"
     >
       <div className="flex p-3">
         {/* 商品图片 */}
         {deal.image && (
-          <div className="w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-gray-50 mr-3">
+          <div className="w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-white mr-3">
             <img
               src={deal.image}
               alt={deal.title}
@@ -50,7 +50,7 @@ export default function DealCard({ deal, onFavorite }: DealCardProps) {
               </span>
             )}
             {deal.discount_percent && deal.discount_percent > 0 && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-50 text-red-500 font-medium">
+              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-50 text-[#FF6A00] font-medium">
                 -{deal.discount_percent}%
               </span>
             )}
@@ -58,7 +58,7 @@ export default function DealCard({ deal, onFavorite }: DealCardProps) {
 
           {/* 价格 */}
           <div className="flex items-baseline gap-1.5">
-            <span className="text-lg font-bold text-red-500">¥{deal.price}</span>
+            <span className="text-lg font-bold text-[#FF6A00]">¥{deal.price}</span>
             {deal.original_price > deal.price && (
               <span className="text-xs text-gray-400 line-through">¥{deal.original_price}</span>
             )}

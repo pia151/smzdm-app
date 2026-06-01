@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../utils/api';
+import DealCard from '../components/DealCard';
 
 const ELITE_TABS = [
   { id: 1, name: '好价商品', icon: '🔥' },
@@ -20,6 +21,8 @@ export default function JdGoods() {
   const [error, setError] = useState('');
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [syncing, setSyncing] = useState(false);
+  const [syncStatus, setSyncStatus] = useState('');
 
   useEffect(() => {
     setPage(1);
@@ -33,11 +36,8 @@ export default function JdGoods() {
     try {
       const data = await api.getJdJingfen(String(activeTab), String(p), '20');
       const list = data.data || [];
-      if (p === 1) {
-        setGoods(list);
-      } else {
-        setGoods(prev => [...prev, ...list]);
-      }
+      if (p === 1) setGoods(list);
+      else setGoods(prev => [...prev, ...list]);
       setHasMore(list.length >= 20);
     } catch (err: any) {
       setError(err.message);
@@ -52,28 +52,55 @@ export default function JdGoods() {
     loadGoods(next);
   }
 
+  async function handleSync() {
+    setSyncing(true);
+    setSyncStatus('正在同步京东精选商品...');
+    try {
+      const res = await fetch('/api/sync/sync-all', { method: 'POST' });
+      const data = await res.json();
+      setSyncStatus(data.message || `同步完成，共 ${data.total_synced} 条`);
+      // 刷新当前列表
+      setTimeout(() => { setSyncStatus(''); }, 3000);
+    } catch (err: any) {
+      setSyncStatus('同步失败: ' + (err.message || '网络错误'));
+      setTimeout(() => { setSyncStatus(''); }, 5000);
+    } finally {
+      setSyncing(false);
+    }
+  }
+
   return (
     <div>
-      {/* 顶部 */}
-      <div className="bg-gradient-to-r from-red-600 to-red-500 px-4 pt-3 pb-4">
-        <h1 className="text-xl font-bold text-white">京东精选</h1>
-        <p className="text-xs text-white/80 mt-0.5">京东联盟推荐好价，购买可获佣金</p>
+      <div className="bg-[#FF6A00] px-4 pt-3 pb-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-bold text-white">京东精选</h1>
+            <p className="text-xs text-white/80 mt-0.5">京东联盟推荐好价，购买可获佣金</p>
+          </div>
+          <button
+            onClick={handleSync}
+            disabled={syncing}
+            className="text-xs bg-white/20 text-white px-3 py-1.5 rounded-full disabled:opacity-50"
+          >
+            {syncing ? '同步中...' : '🔄 刷新'}
+          </button>
+        </div>
       </div>
 
-      {/* 分类Tab */}
+      {syncStatus && (
+        <div className="bg-green-50 text-green-700 text-xs text-center py-2 px-3 border-b border-green-100">
+          {syncStatus}
+        </div>
+      )}
+
       <div className="bg-white sticky top-0 z-10 border-b border-gray-100">
         <div className="category-scroll overflow-x-auto px-3 py-2">
           <div className="flex gap-2 whitespace-nowrap">
             {ELITE_TABS.map(tab => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+              <button key={tab.id} onClick={() => setActiveTab(tab.id)}
                 className={`text-xs px-3 py-1.5 rounded-full flex-shrink-0 ${
-                  activeTab === tab.id
-                    ? 'bg-red-500 text-white'
-                    : 'bg-gray-50 text-gray-600'
-                }`}
-              >
+                  activeTab === tab.id ? 'bg-[#FF6A00] text-white' : 'bg-white text-gray-600'
+                }`}>
                 {tab.icon} {tab.name}
               </button>
             ))}
@@ -81,76 +108,43 @@ export default function JdGoods() {
         </div>
       </div>
 
-      {/* 错误提示 */}
       {error && (
-        <div className="mx-3 mt-3 bg-red-50 text-red-500 text-sm p-3 rounded-lg">
+        <div className="mx-3 mt-3 bg-[#FFF0E0] text-[#FF6A00] text-sm p-3 rounded-lg">
           {error}
-          <p className="text-xs mt-1 text-red-400">请确认 server/.env 中 JD_APP_KEY 和 JD_APP_SECRET 已正确配置</p>
         </div>
       )}
 
-      {/* 商品列表 */}
       <div className="pt-2">
         {goods.map(item => (
-          <Link
-            key={item.skuId}
-            to={`/jd/${item.skuId}`}
-            className="block bg-white rounded-lg mb-3 mx-3 p-3 shadow-sm active:scale-[0.98] transition-transform"
-          >
+          <Link key={item.skuId} to={`/jd/${item.skuId}`}
+            className="block bg-white rounded-lg mb-3 mx-3 p-3 shadow-sm border border-gray-100 active:scale-[0.98] transition-transform">
             <div className="flex gap-3">
-              {/* 商品图 */}
               {item.image && (
-                <div className="w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-gray-50">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = 'none';
-                    }}
-                  />
+                <div className="w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-white">
+                  <img src={item.image} alt={item.title} className="w-full h-full object-cover"
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                 </div>
               )}
-
-              {/* 信息 */}
               <div className="flex-1 min-w-0">
-                <h3 className="text-sm font-medium text-gray-900 line-clamp-2 leading-snug mb-1">
-                  {item.title}
-                </h3>
-
-                {/* 标签 */}
+                <h3 className="text-sm font-medium text-gray-900 line-clamp-2 leading-snug mb-1">{item.title}</h3>
                 <div className="flex items-center gap-1.5 mb-1">
                   <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-50 text-red-600 font-medium">京东</span>
                   {item.commission_rate > 0 && (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-orange-50 text-orange-600 font-medium">
-                      佣金 {item.commission_rate}%
-                    </span>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-orange-50 text-orange-600 font-medium">佣金 {item.commission_rate}%</span>
                   )}
                   {item.coupon && (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-green-50 text-green-600 font-medium">
-                      券满{item.coupon.quota}减{item.coupon.discount}
-                    </span>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-green-50 text-green-600 font-medium">券满{item.coupon.quota}减{item.coupon.discount}</span>
                   )}
                 </div>
-
-                {/* 价格 */}
                 <div className="flex items-baseline gap-1.5">
-                  <span className="text-lg font-bold text-red-500">¥{item.price}</span>
+                  <span className="text-lg font-bold text-[#FF6A00]">¥{item.price}</span>
                   {item.original_price > item.price && (
-                    <>
-                      <span className="text-xs text-gray-400 line-through">¥{item.original_price}</span>
-                      <span className="text-[10px] bg-red-50 text-red-500 px-1 py-0.5 rounded">
-                        -{Math.round((1 - item.price / item.original_price) * 100)}%
-                      </span>
-                    </>
+                    <><span className="text-xs text-gray-400 line-through">¥{item.original_price}</span>
+                      <span className="text-[10px] bg-[#FFF0E0] text-[#FF6A00] px-1 py-0.5 rounded">-{Math.round((1 - item.price / item.original_price) * 100)}%</span></>
                   )}
                 </div>
-
-                {/* 佣金 */}
                 {item.commission > 0 && (
-                  <p className="text-[10px] text-orange-500 mt-0.5">
-                    预估佣金 ¥{item.commission.toFixed(2)}
-                  </p>
+                  <p className="text-[10px] text-orange-500 mt-0.5">预估佣金 ¥{item.commission.toFixed(2)}</p>
                 )}
               </div>
             </div>
@@ -159,14 +153,12 @@ export default function JdGoods() {
 
         {loading && (
           <div className="flex justify-center py-6">
-            <div className="animate-spin rounded-full h-6 w-6 border-2 border-red-500 border-t-transparent" />
+            <div className="animate-spin rounded-full h-6 w-6 border-2 border-[#FF6A00] border-t-transparent" />
           </div>
         )}
 
         {!loading && hasMore && (
-          <button onClick={loadMore} className="w-full py-3 text-sm text-red-500 font-medium">
-            加载更多
-          </button>
+          <button onClick={loadMore} className="w-full py-3 text-sm text-[#FF6A00] font-medium">加载更多</button>
         )}
 
         {!loading && !error && goods.length === 0 && (

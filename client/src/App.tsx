@@ -10,6 +10,7 @@ import ProductDetail from './pages/ProductDetail';
 import Search from './pages/Search';
 import JdGoods from './pages/JdGoods';
 import JdDetail from './pages/JdDetail';
+import SyncPage from './pages/SyncPage';
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/submit" element={<Submit />} />
         <Route path="/search" element={<Search />} />
+        <Route path="/sync" element={<SyncPage />} />
         <Route path="/jd" element={<JdGoods />} />
         <Route path="/jd/:skuId" element={<JdDetail />} />
         <Route path="*" element={<Navigate to="/" replace />} />

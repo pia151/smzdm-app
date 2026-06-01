@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "值否",
+    "slug": "zhifou",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#FF6A00"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.zhifou.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#FF6A00"
+      },
+      "package": "com.zhifou.app"
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "extra": {
+      "apiBaseUrl": "http://localhost:3001/api"
+    }
+  }
+}

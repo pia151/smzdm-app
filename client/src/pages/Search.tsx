@@ -48,41 +48,21 @@ export default function Search() {
             onChange={e => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="搜索商品、好价..."
-            className="flex-1 bg-gray-50 rounded-lg px-3 py-2 text-sm focus:outline-none focus:bg-gray-100"
+            className="flex-1 bg-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:bg-gray-100"
             autoFocus
           />
-          <button
-            onClick={doSearch}
-            disabled={loading}
-            className="text-sm text-red-500 font-medium px-2"
-          >
-            搜索
-          </button>
+          <button onClick={doSearch} disabled={loading}
+            className="text-sm text-[#FF6A00] font-medium px-2">搜索</button>
         </div>
       </div>
 
-      {/* 分类快捷筛选 */}
       <div className="px-3 py-2 bg-white border-b border-gray-50">
         <div className="flex gap-2 overflow-x-auto category-scroll">
-          <button
-            onClick={() => { setSelectedCategory(''); setSearched(false); }}
-            className={`text-xs px-3 py-1.5 rounded-full flex-shrink-0 ${
-              !selectedCategory ? 'bg-red-50 text-red-500' : 'bg-gray-50 text-gray-600'
-            }`}
-          >
-            全部
-          </button>
+          <button onClick={() => { setSelectedCategory(''); setSearched(false); }}
+            className={`text-xs px-3 py-1.5 rounded-full flex-shrink-0 ${!selectedCategory ? 'bg-[#FFF0E0] text-[#FF6A00]' : 'bg-white text-gray-600'}`}>全部</button>
           {categories.map((cat: any) => (
-            <button
-              key={cat.id}
-              onClick={() => {
-                setSelectedCategory(String(cat.id));
-                setSearched(false);
-              }}
-              className={`text-xs px-3 py-1.5 rounded-full flex-shrink-0 ${
-                selectedCategory === String(cat.id) ? 'bg-red-50 text-red-500' : 'bg-gray-50 text-gray-600'
-              }`}
-            >
+            <button key={cat.id} onClick={() => { setSelectedCategory(String(cat.id)); setSearched(false); }}
+              className={`text-xs px-3 py-1.5 rounded-full flex-shrink-0 ${selectedCategory === String(cat.id) ? 'bg-[#FFF0E0] text-[#FF6A00]' : 'bg-white text-gray-600'}`}>
               {cat.icon} {cat.name}
             </button>
           ))}
@@ -92,7 +72,7 @@ export default function Search() {
       <div className="pt-2">
         {loading ? (
           <div className="flex justify-center py-10">
-            <div className="animate-spin rounded-full h-6 w-6 border-2 border-red-500 border-t-transparent" />
+            <div className="animate-spin rounded-full h-6 w-6 border-2 border-[#FF6A00] border-t-transparent" />
           </div>
         ) : searched ? (
           results.length > 0 ? (
@@ -101,7 +81,6 @@ export default function Search() {
             <div className="text-center py-16 text-gray-400">
               <p className="text-4xl mb-3">🔍</p>
               <p className="text-sm">没有找到相关好价</p>
-              <p className="text-xs mt-1">试试其他关键词</p>
             </div>
           )
         ) : (

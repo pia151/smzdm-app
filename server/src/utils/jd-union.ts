@@ -1,32 +1,24 @@
 import crypto from 'crypto';
 
+// ========================================
 // 京东联盟 API 配置
+// ========================================
 const JD_APP_KEY = process.env.JD_APP_KEY || '';
 const JD_APP_SECRET = process.env.JD_APP_SECRET || '';
 const JD_GATEWAY = 'https://api.jd.com/routerjson';
 
-/**
- * 京东联盟 API 签名算法
- * 规则: MD5(app_secret + 按字母排序的参数键值对 + app_secret)
- */
 function generateSign(params: Record<string, string>): string {
-  // 1. 过滤空值和sign参数
   const filtered = Object.entries(params)
     .filter(([k, v]) => v !== '' && k !== 'sign')
     .sort(([a], [b]) => a.localeCompare(b));
 
-  // 2. 拼接: secret + key1value1key2value2... + secret
   const str = JD_APP_SECRET +
     filtered.map(([k, v]) => `${k}${v}`).join('') +
     JD_APP_SECRET;
 
-  // 3. MD5 转大写
   return crypto.createHash('md5').update(str, 'utf8').digest('hex').toUpperCase();
 }
 
-/**
- * 调用京东联盟 API
- */
 export async function jdApi<T = any>(
   method: string,
   bizParams: Record<string, any> = {},
@@ -47,7 +39,6 @@ export async function jdApi<T = any>(
     sign_method: 'md5',
   };
 
-  // 业务参数 JSON 序列化
   const paramJson = JSON.stringify({
     ...bizParams,
     ...(options.pageNo ? { pageNo: options.pageNo } : {}),
@@ -62,7 +53,6 @@ export async function jdApi<T = any>(
   const sign = generateSign(allParams);
   allParams.sign = sign;
 
-  // 发送请求
   const formBody = Object.entries(allParams)
     .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
     .join('&');
@@ -77,8 +67,6 @@ export async function jdApi<T = any>(
   try {
     const data = JSON.parse(text);
 
-    // 京东 API 返回格式: { method_response: { ... } }
-    // 或错误格式: { error_response: { ... } }
     const responseKey = `${method.replace(/\./g, '_')}_response`;
     if (data.error_response) {
       throw new Error(`京东 API 错误: ${data.error_response.code} - ${data.error_response.zh_desc || data.error_response.msg}`);
@@ -89,7 +77,6 @@ export async function jdApi<T = any>(
       throw new Error(`京东 API 返回格式异常: ${text.slice(0, 200)}`);
     }
 
-    // 解析内部的 result 字段
     if (result.result) {
       const inner = JSON.parse(result.result);
       if (inner.code !== 0 && inner.code !== 200) {
@@ -105,121 +92,6 @@ export async function jdApi<T = any>(
   }
 }
 
-// ========================================
-// 具体业务接口封装
-// ========================================
-
-/**
- * 精选商品查询 - 京东精选推荐好价
- * 使用 jd.union.open.goods.query + 精选参数
- * 注意: 需要在京东联盟后台开通 API 权限
- */
-export async function queryJingfenGoods(
-  eliteId: number = 1,
-  pageNo: number = 1,
-  pageSize: number = 20,
-  sortName?: string,
-  sort?: string
-): Promise<any> {
-  // 新版 API 用 goodsReq 嵌套对象传递参数
-  return jdApiV2('jd.union.open.goods.query', {
-    goodsReq: {
-      pageIndex: pageNo,
-      pageSize,
-      isCouponOnly: 0,
-      isPG: 0,
-      sortName: sortName || 'inOrderCountDesc',
-      sort: sort || 'desc',
-      fields: 'skuName,skuId,price,imageInfo,couponInfo,commissionInfo,shopInfo,shareInfo,owner,exPrice,scoreInfo,inOrderCount30Days',
-    }
-  });
-}
-
-/**
- * 关键词搜索商品 (jd.union.open.goods.query)
- */
-export async function searchGoods(
-  keyword: string,
-  pageNo: number = 1,
-  pageSize: number = 20
-): Promise<any> {
-  return jdApiV2('jd.union.open.goods.query', {
-    goodsReq: {
-      keyword,
-      pageIndex: pageNo,
-      pageSize,
-      fields: 'skuName,skuId,price,imageInfo,couponInfo,commissionInfo,shopInfo,shareInfo,owner,inOrderCount30Days',
-    }
-  });
-}
-
-/**
- * 商品详情查询 (jd.union.open.goods.promotiongoodsinfo.query)
- */
-export async function queryGoodsInfo(skuIds: string[]): Promise<any> {
-  return jdApiV2('jd.union.open.goods.promotiongoodsinfo.query', {
-    goodsReq: {
-      skuIds,
-    }
-  });
-}
-
-/**
- * 获取推广链接 (jd.union.open.promotion.common.get)
- * 生成带推广参数的购买链接，用于赚取佣金
- */
-export async function getPromotionUrl(
-  materialId: string,
-  positionId?: number,
-  couponUrl?: string,
-  subPositionId?: string
-): Promise<any> {
-  return jdApiV2('jd.union.open.promotion.common.get', {
-    promotionCodeReq: {
-      materialId,
-      siteId: '',  // 推广位ID, 可选
-      positionId: positionId || 0,
-      couponUrl: couponUrl || '',
-      subUnionId: subPositionId || '',
-    }
-  });
-
-}
-
-/**
- * 获取联盟分类列表 (jd.union.open.category.goods.get)
- */
-export async function getCategoryList(parentId: number = 0): Promise<any> {
-  return jdApiV2('jd.union.open.category.goods.get', {
-    req: {
-      parentId,
-      grade: parentId === 0 ? 1 : 0,
-    }
-  });
-}
-
-/**
- * 精选商品eliteId对照表
- * 1-好价商品 2-好券商品 3-爆款商品 4-高佣金商品
- * 5-销量排行 6-新品首发 7-视频购物 8-历史低价
- * 10-大额券商品 11-618大促 12-双11大促 13-秒杀商品
- */
-export const ELITE_MAP: Record<number, string> = {
-  1: '好价商品',
-  2: '好券商品',
-  3: '爆款商品',
-  4: '高佣金商品',
-  5: '销量排行',
-  6: '新品首发',
-  8: '历史低价',
-  10: '大额券商品',
-  13: '秒杀商品',
-};
-
-/**
- * 通用的京东开放平台 API 调用
- * 兼容多种参数格式，自动处理签名
- */
 export async function jdApiV2<T = any>(
   method: string,
   bizParams: Record<string, any> = {},
@@ -229,7 +101,6 @@ export async function jdApiV2<T = any>(
     throw new Error('京东联盟 API 密钥未配置，请在 .env 中设置 JD_APP_KEY 和 JD_APP_SECRET');
   }
 
-  // 有些接口参数需要合并 pageNo/pageSize
   const finalBiz = { ...bizParams };
   if (options.pageNo) finalBiz.pageNo = options.pageNo;
   if (options.pageSize) finalBiz.pageSize = options.pageSize;
@@ -281,7 +152,6 @@ export async function jdApiV2<T = any>(
       throw new Error(`京东 API 返回格式异常: ${text.slice(0, 200)}`);
     }
 
-    // 处理 queryResult (jingfen)
     if (result.queryResult) {
       const inner = JSON.parse(result.queryResult);
       if (inner.code !== 0 && inner.code !== 200) {
@@ -290,7 +160,6 @@ export async function jdApiV2<T = any>(
       return inner.data || inner;
     }
 
-    // 处理 getResult (promotion)
     if (result.getResult) {
       const inner = JSON.parse(result.getResult);
       if (inner.code !== 0 && inner.code !== 200) {
@@ -304,4 +173,118 @@ export async function jdApiV2<T = any>(
     if (e.message?.startsWith('京东')) throw e;
     throw new Error(`京东 API 解析失败: ${text.slice(0, 200)}`);
   }
+}
+
+// ========================================
+// 京东业务接口
+// ========================================
+
+export async function queryJingfenGoods(
+  eliteId: number = 1,
+  pageNo: number = 1,
+  pageSize: number = 20,
+  sortName?: string,
+  sort?: string
+): Promise<any> {
+  return jdApiV2('jd.union.open.goods.query', {
+    goodsReq: {
+      pageIndex: pageNo,
+      pageSize,
+      isCouponOnly: 0,
+      isPG: 0,
+      sortName: sortName || 'inOrderCount30DaysDesc',
+      sort: sort || '',
+      fields: 'skuName,skuId,price,imageInfo,couponInfo,commissionInfo,shopInfo,shareInfo,owner,exPrice,scoreInfo,inOrderCount30Days',
+    }
+  });
+}
+
+export async function searchGoods(
+  keyword: string,
+  pageNo: number = 1,
+  pageSize: number = 20
+): Promise<any> {
+  return jdApiV2('jd.union.open.goods.query', {
+    goodsReq: {
+      keyword,
+      pageIndex: pageNo,
+      pageSize,
+      fields: 'skuName,skuId,price,imageInfo,couponInfo,commissionInfo,shopInfo,shareInfo,owner,inOrderCount30Days',
+    }
+  });
+}
+
+export async function queryGoodsInfo(skuIds: string[]): Promise<any> {
+  return jdApiV2('jd.union.open.goods.promotiongoodsinfo.query', {
+    goodsReq: {
+      skuIds,
+    }
+  });
+}
+
+export async function getPromotionUrl(
+  materialId: string,
+  positionId?: number,
+  couponUrl?: string,
+  subPositionId?: string
+): Promise<any> {
+  return jdApiV2('jd.union.open.promotion.common.get', {
+    promotionCodeReq: {
+      materialId,
+      siteId: '',
+      positionId: positionId || 0,
+      couponUrl: couponUrl || '',
+      subUnionId: subPositionId || '',
+    }
+  });
+}
+
+export async function getCategoryList(parentId: number = 0): Promise<any> {
+  return jdApiV2('jd.union.open.category.goods.get', {
+    req: {
+      parentId,
+      grade: parentId === 0 ? 1 : 0,
+    }
+  });
+}
+
+/** 精选商品 eliteId 对照表 */
+export const ELITE_MAP: Record<number, string> = {
+  1: '好价商品',
+  2: '好券商品',
+  3: '爆款商品',
+  4: '高佣金商品',
+  5: '销量排行',
+  6: '新品首发',
+  8: '历史低价',
+  10: '大额券商品',
+  13: '秒杀商品',
+};
+
+/** 解析京东商品数据为统一格式 */
+export function parseJdGoods(item: any, eliteName: string) {
+  const info = item.goodsInfo || item;
+  const skuId = info.skuId || info.skuIdStr;
+  const price = Number(info.price || info.wlPrice || 0);
+  const origPrice = Number(info.originalPrice || info.jdPrice || 0);
+  const coupon = info.couponInfo?.couponList?.[0];
+
+  return {
+    id: `jd_${skuId}`,
+    dealId: `jd_d_${skuId}_auto`,
+    title: info.goodsName || info.title || '',
+    subtitle: eliteName + '精选',
+    image: info.imageUrl || info.pic || '',
+    images: info.imageUrlList || [],
+    price,
+    original_price: origPrice,
+    discount: origPrice > 0 ? Math.round((1 - price / origPrice) * 100) : 0,
+    platform: '京东',
+    platform_icon: 'jd',
+    url: `https://item.m.jd.com/product/${skuId}.html`,
+    coupon: coupon ? `满${coupon.quota}减${coupon.discount}` : '',
+    sales_count: Number(info.inOrderCount30Days || 0),
+    rating: Number(info.goodCommentsShare || 0) / 10,
+    skuId,
+  };
 }
