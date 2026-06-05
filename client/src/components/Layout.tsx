@@ -2,9 +2,10 @@ import { Outlet, Link, useLocation } from 'react-router-dom';
 
 const navItems = [
   { path: '/', label: '首页', icon: '🏠' },
-  { path: '/search', label: '搜索', icon: '🔍' },
+  { path: '/aggregate-search', label: '搜索', icon: '🔍' },
   { path: '/submit', label: '爆料', icon: '✏️' },
   { path: '/favorites', label: '收藏', icon: '⭐' },
+  { path: '/alerts', label: '提醒', icon: '🔔' },
   { path: '/profile', label: '我的', icon: '👤' },
 ];
 
@@ -29,7 +30,7 @@ export default function Layout() {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex flex-col items-center justify-center min-w-[60px] py-1 transition-colors ${
+                className={`flex flex-col items-center justify-center min-w-[50px] py-1 transition-colors ${
                   isActive ? 'text-[#FF6A00]' : 'text-gray-400'
                 }`}
               >

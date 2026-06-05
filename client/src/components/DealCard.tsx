@@ -1,8 +1,34 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
 
 interface DealCardProps {
   deal: any;
   onFavorite?: (id: string) => void;
+}
+
+// 从商品ID提取京东SKU ID
+function extractSkuId(deal: any): string | null {
+  if (!deal.product_id) return null;
+  // product_id格式: jd_123456 或 p1
+  if (deal.product_id.startsWith('jd_')) {
+    return deal.product_id.replace('jd_', '');
+  }
+  return null;
+}
+
+// 生成京东商品图片URL
+function getJdImageUrl(skuId: string): string {
+  return `https://img10.360buyimg.com/n1/s450x450_${skuId}.jpg`;
+}
+
+// 生成京东搜索页URL
+function getJdSearchUrl(title: string): string {
+  return `https://search.jd.com/Search?keyword=${encodeURIComponent(title)}&enc=utf-8`;
+}
+
+// 生成占位图SVG (带商品关键词)
+function getPlaceholderSvg(title: string): string {
+  const encoded = encodeURIComponent(title.slice(0, 20));
+  return `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><rect fill='%23f5f5f5' width='200' height='200'/><text x='100' y='90' text-anchor='middle' fill='%23999' font-size='14' font-family='sans-serif'>暂无图片</text><text x='100' y='115' text-anchor='middle' fill='%23ccc' font-size='12' font-family='sans-serif'>${encoded}</text></svg>`;
 }
 
 export default function DealCard({ deal, onFavorite }: DealCardProps) {
@@ -15,43 +41,71 @@ export default function DealCard({ deal, onFavorite }: DealCardProps) {
   };
 
   const platformColor = platformColors[deal.platform] || 'bg-gray-100 text-gray-600';
+  const skuId = extractSkuId(deal);
+  const jdImageUrl = skuId ? getJdImageUrl(skuId) : null;
+  const hasRealImage = deal.image && deal.image.startsWith('http');
+
+  // 跳转URL: 优先source_url，其次京东商品页，最后京东搜索
+  const jumpUrl = deal.source_url || (skuId ? `https://item.m.jd.com/product/${skuId}.html` : getJdSearchUrl(deal.title));
+
+  const [imgError, setImgError] = useState(false);
 
   return (
-    <Link
-      to={`/deal/${deal.id}`}
-      className="block bg-white rounded-lg mb-3 mx-3 overflow-hidden shadow-sm border border-gray-100 active:scale-[0.98] transition-transform"
-    >
+    <div className="bg-white rounded-lg mb-3 mx-3 overflow-hidden shadow-sm border border-gray-100">
       <div className="flex p-3">
-        {/* 商品图片 */}
-        {deal.image && (
-          <div className="w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-white mr-3">
-            <img
-              src={deal.image}
-              alt={deal.title}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%23f0f0f0" width="100" height="100"/><text x="50" y="55" text-anchor="middle" fill="%23999" font-size="12">暂无图</text></svg>';
-              }}
-            />
-          </div>
-        )}
+        {/* 商品图片 - 带跳转 */}
+        <div className="relative w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-white mr-3">
+          {jdImageUrl && !imgError ? (
+            <a href={jumpUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
+              <img
+                src={jdImageUrl}
+                alt={deal.title}
+                className="w-full h-full object-cover"
+                onError={() => setImgError(true)}
+              />
+            </a>
+          ) : hasRealImage ? (
+            <a href={jumpUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
+              <img
+                src={deal.image}
+                alt={deal.title}
+                className="w-full h-full object-cover"
+                onError={() => setImgError(true)}
+              />
+            </a>
+          ) : (
+            <a href={jumpUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
+              <img
+                src={getPlaceholderSvg(deal.title)}
+                alt=""
+                className="w-full h-full object-cover"
+              />
+            </a>
+          )}
+          {/* 平台角标 */}
+          <span className={`absolute top-0 left-0 text-[9px] px-1 py-0.5 rounded-br ${platformColor}`}>
+            {deal.platform}
+          </span>
+        </div>
 
         {/* 内容 */}
         <div className="flex-1 min-w-0">
-          <h3 className="text-sm font-medium text-gray-900 line-clamp-2 leading-snug mb-1">
-            {deal.title}
-          </h3>
+          <a href={jumpUrl} target="_blank" rel="noopener noreferrer">
+            <h3 className="text-sm font-medium text-gray-900 line-clamp-2 leading-snug mb-1 hover:text-[#FF6A00]">
+              {deal.title}
+            </h3>
+          </a>
 
           {/* 标签 */}
           <div className="flex items-center gap-1.5 mb-1.5">
-            {deal.platform && (
-              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${platformColor}`}>
-                {deal.platform}
-              </span>
-            )}
             {deal.discount_percent && deal.discount_percent > 0 && (
               <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-50 text-[#FF6A00] font-medium">
                 -{deal.discount_percent}%
+              </span>
+            )}
+            {deal.coupon_info && (
+              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#FF6A00]/10 text-[#FF6A00] font-medium">
+                券
               </span>
             )}
           </div>
@@ -81,7 +135,21 @@ export default function DealCard({ deal, onFavorite }: DealCardProps) {
           </div>
         </div>
       </div>
-    </Link>
+
+      {/* 底部跳转按钮 */}
+      {jumpUrl && jumpUrl !== '#' && (
+        <div className="px-3 pb-2">
+          <a
+            href={jumpUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block w-full text-center text-xs py-1.5 bg-[#FF6A00] text-white rounded-md hover:bg-[#e55f00] transition-colors"
+          >
+            去购买 ▸
+          </a>
+        </div>
+      )}
+    </div>
   );
 }
 

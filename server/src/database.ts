@@ -117,6 +117,28 @@ export async function getDb(): Promise<SqlJsDatabase> {
       recorded_at TEXT DEFAULT (datetime('now','localtime')),
       FOREIGN KEY (product_id) REFERENCES products(id)
     );
+
+    CREATE TABLE IF NOT EXISTS price_alerts (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      product_id TEXT,
+      deal_id TEXT,
+      title TEXT NOT NULL,
+      url TEXT DEFAULT '',
+      platform TEXT DEFAULT '',
+      target_price REAL NOT NULL,
+      current_price REAL DEFAULT 0,
+      last_check_price REAL DEFAULT 0,
+      is_active INTEGER DEFAULT 1,
+      is_triggered INTEGER DEFAULT 0,
+      created_at TEXT DEFAULT (datetime('now','localtime')),
+      triggered_at TEXT,
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_price_alerts_user ON price_alerts(user_id);
+    CREATE INDEX IF NOT EXISTS idx_price_alerts_active ON price_alerts(is_active, is_triggered);
+    CREATE INDEX IF NOT EXISTS idx_price_history_product ON price_history(product_id);
   `);
 
   // 写入磁盘

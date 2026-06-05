@@ -95,4 +95,34 @@ export const api = {
 
   // 统计
   getStats: () => request('/stats'),
+
+  // 多平台聚合搜索
+  aggregateSearch: (q: string, page?: string) => {
+    const params: Record<string, string> = { q };
+    if (page) params.page = page;
+    const search = '?' + new URLSearchParams(params).toString();
+    return request(`/aggregate/search${search}`);
+  },
+
+  // 逛丢首页聚合
+  aggregateHome: (params?: { platform?: string; category?: string; sort?: string }) => {
+    const search = params ? '?' + new URLSearchParams(params as Record<string, string>).toString() : '';
+    return request(`/aggregate/home${search}`);
+  },
+
+  // 商品价格历史
+  priceHistory: (productId: string) => request(`/aggregate/price-history/${productId}`),
+
+  // 价格提醒
+  getAlerts: (status?: string) => {
+    const search = status ? '?status=' + status : '';
+    return request(`/alerts${search}`);
+  },
+  createAlert: (data: { title: string; url?: string; platform?: string; target_price: number; current_price?: number; product_id?: string; deal_id?: string }) =>
+    request('/alerts', { method: 'POST', body: JSON.stringify(data) }),
+  updateAlert: (id: string, data: { target_price?: number; is_active?: boolean }) =>
+    request(`/alerts/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
+  deleteAlert: (id: string) =>
+    request(`/alerts/${id}`, { method: 'DELETE' }),
+  checkAlerts: () => request('/alerts/check-all', { method: 'POST' }),
 };

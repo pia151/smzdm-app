@@ -1,20 +1,35 @@
 import crypto from 'crypto';
 
-// ========================================
-// 京东联盟 API 配置
-// ========================================
-const JD_APP_KEY = process.env.JD_APP_KEY || '';
-const JD_APP_SECRET = process.env.JD_APP_SECRET || '';
 const JD_GATEWAY = 'https://api.jd.com/routerjson';
 
+function getJdConfig() {
+  const config = {
+    appKey: process.env.JD_APP_KEY || '',
+    appSecret: process.env.JD_APP_SECRET || '',
+  };
+
+  // 解析 PID: 格式: siteId_positionId_subUnionId
+  // 例如: 277060029_348363273_3105928193
+  const pid = process.env.JD_PID || '';
+  if (pid) {
+    const parts = pid.split('_');
+    config.siteId = parts[0] || '';
+    config.positionId = parts[1] || '';
+    config.subUnionId = parts[2] || '';
+  }
+
+  return config;
+}
+
 function generateSign(params: Record<string, string>): string {
+  const config = getJdConfig();
   const filtered = Object.entries(params)
     .filter(([k, v]) => v !== '' && k !== 'sign')
     .sort(([a], [b]) => a.localeCompare(b));
 
-  const str = JD_APP_SECRET +
+  const str = config.appSecret +
     filtered.map(([k, v]) => `${k}${v}`).join('') +
-    JD_APP_SECRET;
+    config.appSecret;
 
   return crypto.createHash('md5').update(str, 'utf8').digest('hex').toUpperCase();
 }
@@ -24,7 +39,8 @@ export async function jdApi<T = any>(
   bizParams: Record<string, any> = {},
   options: { pageNo?: number; pageSize?: number } = {}
 ): Promise<T> {
-  if (!JD_APP_KEY || !JD_APP_SECRET) {
+  const config = getJdConfig();
+  if (!config.appKey || !config.appSecret) {
     throw new Error('京东联盟 API 密钥未配置，请在 .env 中设置 JD_APP_KEY 和 JD_APP_SECRET');
   }
 
@@ -32,7 +48,7 @@ export async function jdApi<T = any>(
 
   const systemParams: Record<string, string> = {
     method,
-    app_key: JD_APP_KEY,
+    app_key: config.appKey,
     timestamp,
     format: 'json',
     v: '1.0',
@@ -97,7 +113,8 @@ export async function jdApiV2<T = any>(
   bizParams: Record<string, any> = {},
   options: { pageNo?: number; pageSize?: number } = {}
 ): Promise<T> {
-  if (!JD_APP_KEY || !JD_APP_SECRET) {
+  const config = getJdConfig();
+  if (!config.appKey || !config.appSecret) {
     throw new Error('京东联盟 API 密钥未配置，请在 .env 中设置 JD_APP_KEY 和 JD_APP_SECRET');
   }
 
@@ -105,11 +122,13 @@ export async function jdApiV2<T = any>(
   if (options.pageNo) finalBiz.pageNo = options.pageNo;
   if (options.pageSize) finalBiz.pageSize = options.pageSize;
 
-  const timestamp = new Date().toISOString().replace(/T/, ' ').replace(/\.\d{3}Z$/, '');
+  const d = new Date();
+  d.setHours(d.getHours() + 8); // 北京时间 UTC+8
+  const timestamp = d.toISOString().replace(/T/, ' ').replace(/\.\d{3}Z$/, '');
 
   const systemParams: Record<string, string> = {
     method,
-    app_key: JD_APP_KEY,
+    app_key: config.appKey,
     timestamp,
     format: 'json',
     v: '1.0',
@@ -175,10 +194,6 @@ export async function jdApiV2<T = any>(
   }
 }
 
-// ========================================
-// 京东业务接口
-// ========================================
-
 export async function queryJingfenGoods(
   eliteId: number = 1,
   pageNo: number = 1,
@@ -224,17 +239,22 @@ export async function queryGoodsInfo(skuIds: string[]): Promise<any> {
 
 export async function getPromotionUrl(
   materialId: string,
-  positionId?: number,
+  positionId?: number | string,
   couponUrl?: string,
   subPositionId?: string
 ): Promise<any> {
+  const config = getJdConfig();
+
+  // 优先使用传入的positionId，否则用环境变量中的
+  const finalPositionId = positionId || config.positionId || 0;
+
   return jdApiV2('jd.union.open.promotion.common.get', {
     promotionCodeReq: {
       materialId,
-      siteId: '',
-      positionId: positionId || 0,
+      siteId: config.siteId || '',
+      positionId: Number(finalPositionId) || 0,
       couponUrl: couponUrl || '',
-      subUnionId: subPositionId || '',
+      subUnionId: config.subUnionId || '',
     }
   });
 }
@@ -248,7 +268,6 @@ export async function getCategoryList(parentId: number = 0): Promise<any> {
   });
 }
 
-/** 精选商品 eliteId 对照表 */
 export const ELITE_MAP: Record<number, string> = {
   1: '好价商品',
   2: '好券商品',
@@ -261,7 +280,6 @@ export const ELITE_MAP: Record<number, string> = {
   13: '秒杀商品',
 };
 
-/** 解析京东商品数据为统一格式 */
 export function parseJdGoods(item: any, eliteName: string) {
   const info = item.goodsInfo || item;
   const skuId = info.skuId || info.skuIdStr;

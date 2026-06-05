@@ -3,7 +3,7 @@ import cors from 'cors';
 import path from 'path';
 import dotenv from 'dotenv';
 
-dotenv.config({ path: path.join(__dirname, '..', '.env') });
+dotenv.config({ path: path.join(process.cwd(), '.env') });
 
 import { getDb, saveDb } from './database';
 import authRoutes from './routes/auth';
@@ -14,6 +14,8 @@ import favoritesRoutes from './routes/favorites';
 import commentsRoutes from './routes/comments';
 import jdRoutes from './routes/jd';
 import syncRoutes from './routes/sync';
+import aggregateRoutes from './routes/aggregate';
+import alertsRoutes from './routes/alerts';
 import { AuthRequest, authMiddleware } from './middleware/auth';
 
 const app = express();
@@ -33,6 +35,8 @@ app.use('/api/favorites', authMiddleware, favoritesRoutes);
 app.use('/api/comments', commentsRoutes);
 app.use('/api/jd', jdRoutes);
 app.use('/api/sync', syncRoutes);
+app.use('/api/aggregate', aggregateRoutes);
+app.use('/api/alerts', authMiddleware, alertsRoutes);
 
 // 仪表盘统计
 app.get('/api/stats', async (_req, res) => {

@@ -7,11 +7,13 @@ import { Text, View } from 'react-native';
 
 import HomeScreen from './screens/HomeScreen';
 import SearchScreen from './screens/SearchScreen';
+import AggregateSearchScreen from './screens/AggregateSearchScreen';
 import SubmitScreen from './screens/SubmitScreen';
 import FavoritesScreen from './screens/FavoritesScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import DealDetailScreen from './screens/DealDetailScreen';
 import JdGoodsScreen from './screens/JdGoodsScreen';
+import AlertsScreen from './screens/AlertsScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -22,6 +24,7 @@ function TabIcon({ label, focused }: { label: string; focused: boolean }) {
     '搜索': '🔍',
     '爆料': '✏️',
     '收藏': '⭐',
+    '提醒': '🔔',
     '我的': '👤',
   };
   return (
@@ -56,9 +59,10 @@ function TabNavigator() {
       })}
     >
       <Tab.Screen name="首页" component={HomeScreen} />
-      <Tab.Screen name="搜索" component={SearchScreen} />
+      <Tab.Screen name="搜索" component={AggregateSearchScreen} />
       <Tab.Screen name="爆料" component={SubmitScreen} />
       <Tab.Screen name="收藏" component={FavoritesScreen} />
+      <Tab.Screen name="提醒" component={AlertsScreen} />
       <Tab.Screen name="我的" component={ProfileScreen} />
     </Tab.Navigator>
   );

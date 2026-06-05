@@ -11,6 +11,8 @@ import Search from './pages/Search';
 import JdGoods from './pages/JdGoods';
 import JdDetail from './pages/JdDetail';
 import SyncPage from './pages/SyncPage';
+import AggregateSearch from './pages/AggregateSearch';
+import AlertsPage from './pages/AlertsPage';
 
 export default function App() {
   return (
@@ -27,6 +29,8 @@ export default function App() {
         <Route path="/sync" element={<SyncPage />} />
         <Route path="/jd" element={<JdGoods />} />
         <Route path="/jd/:skuId" element={<JdDetail />} />
+        <Route path="/aggregate-search" element={<AggregateSearch />} />
+        <Route path="/alerts" element={<AlertsPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
