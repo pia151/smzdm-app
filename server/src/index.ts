@@ -16,6 +16,7 @@ import jdRoutes from './routes/jd';
 import syncRoutes from './routes/sync';
 import aggregateRoutes from './routes/aggregate';
 import alertsRoutes from './routes/alerts';
+import scraperRoutes from './routes/scraper';
 import { AuthRequest, authMiddleware } from './middleware/auth';
 
 const app = express();
@@ -37,6 +38,7 @@ app.use('/api/jd', jdRoutes);
 app.use('/api/sync', syncRoutes);
 app.use('/api/aggregate', aggregateRoutes);
 app.use('/api/alerts', authMiddleware, alertsRoutes);
+app.use('/api/scraper', scraperRoutes);
 
 // 仪表盘统计
 app.get('/api/stats', async (_req, res) => {

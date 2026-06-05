@@ -136,14 +136,20 @@ export default function DealCard({ deal, onFavorite }: DealCardProps) {
         </div>
       </div>
 
-      {/* 底部跳转按钮 */}
+      {/* 底部跳转按钮 - 带转链 */}
       {jumpUrl && jumpUrl !== '#' && (
         <div className="px-3 pb-2">
           <a
-            href={jumpUrl}
+            href={`/api/scraper/jump/${deal.id}`}
             target="_blank"
             rel="noopener noreferrer"
             className="block w-full text-center text-xs py-1.5 bg-[#FF6A00] text-white rounded-md hover:bg-[#e55f00] transition-colors"
+            onClick={(e) => {
+              // 阻止默认跳转，由后端重定向
+              e.preventDefault();
+              // 直接跳转，让后端处理转链
+              window.open(`/api/scraper/jump/${deal.id}`, '_blank');
+            }}
           >
             去购买 ▸
           </a>
