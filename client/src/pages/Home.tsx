@@ -74,7 +74,7 @@ export default function Home() {
   return (
     <div>
       {/* 顶部品牌区 */}
-      <div className="bg-[#FF6A00] px-4 pt-3 pb-5">
+      <div className="bg-[#007AFF] px-4 pt-3 pb-5">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-bold text-white">值否</h1>
@@ -95,13 +95,13 @@ export default function Home() {
         <div className="flex items-center px-3 py-2 border-b border-gray-50">
           <button
             onClick={() => setSort('new')}
-            className={`text-sm px-3 py-1 rounded-full mr-2 ${sort === 'new' ? 'bg-[#FF6A00] text-white' : 'text-gray-500'}`}
+            className={`text-sm px-3 py-1 rounded-full mr-2 ${sort === 'new' ? 'bg-[#007AFF] text-white' : 'text-gray-500'}`}
           >
             最新
           </button>
           <button
             onClick={() => setSort('hot')}
-            className={`text-sm px-3 py-1 rounded-full ${sort === 'hot' ? 'bg-[#FF6A00] text-white' : 'text-gray-500'}`}
+            className={`text-sm px-3 py-1 rounded-full ${sort === 'hot' ? 'bg-[#007AFF] text-white' : 'text-gray-500'}`}
           >
             最热
           </button>
@@ -114,7 +114,7 @@ export default function Home() {
             <button
               onClick={() => setActiveCategory(null)}
               className={`text-xs px-3 py-1.5 rounded-full flex-shrink-0 ${
-                activeCategory === null ? 'bg-[#FFF0E0] text-[#FF6A00] border border-[#FFD6A0]' : 'bg-white text-gray-600 border border-gray-100'
+                activeCategory === null ? 'bg-blue-50 text-[#007AFF] border border-blue-200' : 'bg-white text-gray-600 border border-gray-100'
               }`}
             >
               全部
@@ -124,7 +124,7 @@ export default function Home() {
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
                 className={`text-xs px-3 py-1.5 rounded-full flex-shrink-0 ${
-                  activeCategory === cat.id ? 'bg-[#FFF0E0] text-[#FF6A00] border border-[#FFD6A0]' : 'bg-white text-gray-600 border border-gray-100'
+                  activeCategory === cat.id ? 'bg-blue-50 text-[#007AFF] border border-blue-200' : 'bg-white text-gray-600 border border-gray-100'
                 }`}
               >
                 {cat.icon} {cat.name}
@@ -142,14 +142,14 @@ export default function Home() {
 
         {loading && (
           <div className="flex justify-center py-6">
-            <div className="animate-spin rounded-full h-6 w-6 border-2 border-[#FF6A00] border-t-transparent" />
+            <div className="animate-spin rounded-full h-6 w-6 border-2 border-[#007AFF] border-t-transparent" />
           </div>
         )}
 
         {!loading && hasMore && (
           <button
             onClick={loadMore}
-            className="w-full py-3 text-sm text-[#FF6A00] font-medium"
+            className="w-full py-3 text-sm text-[#007AFF] font-medium"
           >
             加载更多
           </button>
@@ -163,7 +163,7 @@ export default function Home() {
           <div className="text-center py-10 text-gray-400">
             <p className="text-4xl mb-3">🔍</p>
             <p>这里还没有好价</p>
-            <Link to="/submit" className="text-[#FF6A00] text-sm mt-2 inline-block">去爆料 →</Link>
+            <Link to="/submit" className="text-[#007AFF] text-sm mt-2 inline-block">去爆料 →</Link>
           </div>
         )}
       </div>

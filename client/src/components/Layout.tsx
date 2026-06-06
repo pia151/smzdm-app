@@ -31,7 +31,7 @@ export default function Layout() {
                 key={item.path}
                 to={item.path}
                 className={`flex flex-col items-center justify-center min-w-[50px] py-1 transition-colors ${
-                  isActive ? 'text-[#FF6A00]' : 'text-gray-400'
+                  isActive ? 'text-[#007AFF]' : 'text-gray-400'
                 }`}
               >
                 <span className="text-xl leading-none">{item.icon}</span>

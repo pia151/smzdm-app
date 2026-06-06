@@ -70,7 +70,7 @@ export default function SyncPage() {
           <button
             onClick={doSyncAll}
             disabled={syncing}
-            className="w-full bg-[#FF6A00] text-white py-2.5 rounded-lg text-sm font-medium disabled:opacity-50"
+            className="w-full bg-[#007AFF] text-white py-2.5 rounded-lg text-sm font-medium disabled:opacity-50"
           >
             {syncing ? '⏳ 同步中...' : '🔄 全平台同步商品'}
           </button>
@@ -78,7 +78,7 @@ export default function SyncPage() {
           <button
             onClick={doUpdatePrices}
             disabled={pricing}
-            className="w-full bg-white text-[#FF6A00] py-2.5 rounded-lg text-sm font-medium border border-[#FFD6A0] disabled:opacity-50"
+            className="w-full bg-white text-[#007AFF] py-2.5 rounded-lg text-sm font-medium border border-ios-200 disabled:opacity-50"
           >
             {pricing ? '⏳ 更新中...' : '💰 更新商品价格'}
           </button>
@@ -130,8 +130,8 @@ export default function SyncPage() {
         )}
 
         {/* 自动同步说明 */}
-        <div className="bg-[#FFF0E0] rounded-lg p-4 text-xs text-gray-600 leading-relaxed">
-          <p className="font-medium text-[#FF6A00] mb-1">🤖 自动同步说明</p>
+        <div className="bg-[#E8F0FE] rounded-lg p-4 text-xs text-gray-600 leading-relaxed">
+          <p className="font-medium text-[#007AFF] mb-1">🤖 自动同步说明</p>
           <p>• 京东精选商品：每4小时自动同步一次</p>
           <p>• 商品价格：每次同步时自动更新</p>
           <p>• 价格历史：按天记录，支持30天趋势图</p>

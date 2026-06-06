@@ -91,7 +91,7 @@ export default function DealCard({ deal, onFavorite }: DealCardProps) {
         {/* 内容 */}
         <div className="flex-1 min-w-0">
           <a href={jumpUrl} target="_blank" rel="noopener noreferrer">
-            <h3 className="text-sm font-medium text-gray-900 line-clamp-2 leading-snug mb-1 hover:text-[#FF6A00]">
+            <h3 className="text-sm font-medium text-gray-900 line-clamp-2 leading-snug mb-1 hover:text-[#007AFF]">
               {deal.title}
             </h3>
           </a>
@@ -99,12 +99,12 @@ export default function DealCard({ deal, onFavorite }: DealCardProps) {
           {/* 标签 */}
           <div className="flex items-center gap-1.5 mb-1.5">
             {deal.discount_percent && deal.discount_percent > 0 && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-50 text-[#FF6A00] font-medium">
+              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-50 text-[#007AFF] font-medium">
                 -{deal.discount_percent}%
               </span>
             )}
             {deal.coupon_info && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#FF6A00]/10 text-[#FF6A00] font-medium">
+              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#007AFF]/10 text-[#007AFF] font-medium">
                 券
               </span>
             )}
@@ -112,7 +112,7 @@ export default function DealCard({ deal, onFavorite }: DealCardProps) {
 
           {/* 价格 */}
           <div className="flex items-baseline gap-1.5">
-            <span className="text-lg font-bold text-[#FF6A00]">¥{deal.price}</span>
+            <span className="text-lg font-bold text-[#007AFF]">¥{deal.price}</span>
             {deal.original_price > deal.price && (
               <span className="text-xs text-gray-400 line-through">¥{deal.original_price}</span>
             )}
@@ -143,7 +143,7 @@ export default function DealCard({ deal, onFavorite }: DealCardProps) {
             href={`/api/scraper/jump/${deal.id}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="block w-full text-center text-xs py-1.5 bg-[#FF6A00] text-white rounded-md hover:bg-[#e55f00] transition-colors"
+            className="block w-full text-center text-xs py-1.5 bg-[#007AFF] text-white rounded-md hover:bg-[#0062cc] transition-colors"
             onClick={(e) => {
               // 阻止默认跳转，由后端重定向
               e.preventDefault();

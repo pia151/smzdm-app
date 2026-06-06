@@ -85,7 +85,7 @@ export default function AlertsPage() {
   return (
     <div className="min-h-screen bg-gray-50 max-w-lg mx-auto pb-20">
       {/* 头部 */}
-      <div className="bg-[#FF6A00] px-4 pt-4 pb-5">
+      <div className="bg-[#007AFF] px-4 pt-4 pb-5">
         <h1 className="text-xl font-bold text-white">🔔 价格提醒</h1>
         <p className="text-white/70 text-xs mt-1">降价时自动通知您</p>
 
@@ -118,7 +118,7 @@ export default function AlertsPage() {
             onClick={() => setFilter(tab.id)}
             className={`text-sm pb-1 border-b-2 ${
               filter === tab.id
-                ? 'border-[#FF6A00] text-[#FF6A00]'
+                ? 'border-[#007AFF] text-[#007AFF]'
                 : 'border-transparent text-gray-400'
             }`}
           >
@@ -131,7 +131,7 @@ export default function AlertsPage() {
       <div className="px-3 py-3">
         {loading && (
           <div className="flex justify-center py-10">
-            <div className="animate-spin rounded-full h-6 w-6 border-2 border-[#FF6A00] border-t-transparent" />
+            <div className="animate-spin rounded-full h-6 w-6 border-2 border-[#007AFF] border-t-transparent" />
           </div>
         )}
 
@@ -165,7 +165,7 @@ export default function AlertsPage() {
                     <div className="flex items-center gap-3 mt-2">
                       <div>
                         <p className="text-xs text-gray-400">当前价</p>
-                        <p className="text-lg font-bold text-[#FF6A00]">
+                        <p className="text-lg font-bold text-[#007AFF]">
                           ¥{alert.current_price}
                         </p>
                       </div>
@@ -194,7 +194,7 @@ export default function AlertsPage() {
                         </span>
                       )}
                       {alert.drop_amount > 0 && !alert.is_triggered && (
-                        <span className="text-xs text-orange-500">
+                        <span className="text-xs text-blue-500">
                           还需降 ¥{alert.drop_amount.toFixed(2)}
                         </span>
                       )}
@@ -207,7 +207,7 @@ export default function AlertsPage() {
                       <>
                         <button
                           onClick={() => updateTargetPrice(alert.id, alert.current_price)}
-                          className="text-xs text-[#FF6A00] px-2 py-1 border border-[#FF6A00] rounded"
+                          className="text-xs text-[#007AFF] px-2 py-1 border border-[#007AFF] rounded"
                         >
                           修改
                         </button>
@@ -238,7 +238,7 @@ export default function AlertsPage() {
                     href={alert.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block mt-3 text-center text-xs text-[#FF6A00] py-2 bg-orange-50 rounded-lg"
+                    className="block mt-3 text-center text-xs text-[#007AFF] py-2 bg-blue-50 rounded-lg"
                   >
                     去购买 →
                   </a>

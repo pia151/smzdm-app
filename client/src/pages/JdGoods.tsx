@@ -71,7 +71,7 @@ export default function JdGoods() {
 
   return (
     <div>
-      <div className="bg-[#FF6A00] px-4 pt-3 pb-4">
+      <div className="bg-[#007AFF] px-4 pt-3 pb-4">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-bold text-white">京东精选</h1>
@@ -99,7 +99,7 @@ export default function JdGoods() {
             {ELITE_TABS.map(tab => (
               <button key={tab.id} onClick={() => setActiveTab(tab.id)}
                 className={`text-xs px-3 py-1.5 rounded-full flex-shrink-0 ${
-                  activeTab === tab.id ? 'bg-[#FF6A00] text-white' : 'bg-white text-gray-600'
+                  activeTab === tab.id ? 'bg-[#007AFF] text-white' : 'bg-white text-gray-600'
                 }`}>
                 {tab.icon} {tab.name}
               </button>
@@ -109,7 +109,7 @@ export default function JdGoods() {
       </div>
 
       {error && (
-        <div className="mx-3 mt-3 bg-[#FFF0E0] text-[#FF6A00] text-sm p-3 rounded-lg">
+        <div className="mx-3 mt-3 bg-[#E8F0FE] text-[#007AFF] text-sm p-3 rounded-lg">
           {error}
         </div>
       )}
@@ -130,21 +130,21 @@ export default function JdGoods() {
                 <div className="flex items-center gap-1.5 mb-1">
                   <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-50 text-red-600 font-medium">京东</span>
                   {item.commission_rate > 0 && (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-orange-50 text-orange-600 font-medium">佣金 {item.commission_rate}%</span>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-600 font-medium">佣金 {item.commission_rate}%</span>
                   )}
                   {item.coupon && (
                     <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-green-50 text-green-600 font-medium">券满{item.coupon.quota}减{item.coupon.discount}</span>
                   )}
                 </div>
                 <div className="flex items-baseline gap-1.5">
-                  <span className="text-lg font-bold text-[#FF6A00]">¥{item.price}</span>
+                  <span className="text-lg font-bold text-[#007AFF]">¥{item.price}</span>
                   {item.original_price > item.price && (
                     <><span className="text-xs text-gray-400 line-through">¥{item.original_price}</span>
-                      <span className="text-[10px] bg-[#FFF0E0] text-[#FF6A00] px-1 py-0.5 rounded">-{Math.round((1 - item.price / item.original_price) * 100)}%</span></>
+                      <span className="text-[10px] bg-[#E8F0FE] text-[#007AFF] px-1 py-0.5 rounded">-{Math.round((1 - item.price / item.original_price) * 100)}%</span></>
                   )}
                 </div>
                 {item.commission > 0 && (
-                  <p className="text-[10px] text-orange-500 mt-0.5">预估佣金 ¥{item.commission.toFixed(2)}</p>
+                  <p className="text-[10px] text-blue-500 mt-0.5">预估佣金 ¥{item.commission.toFixed(2)}</p>
                 )}
               </div>
             </div>
@@ -153,12 +153,12 @@ export default function JdGoods() {
 
         {loading && (
           <div className="flex justify-center py-6">
-            <div className="animate-spin rounded-full h-6 w-6 border-2 border-[#FF6A00] border-t-transparent" />
+            <div className="animate-spin rounded-full h-6 w-6 border-2 border-[#007AFF] border-t-transparent" />
           </div>
         )}
 
         {!loading && hasMore && (
-          <button onClick={loadMore} className="w-full py-3 text-sm text-[#FF6A00] font-medium">加载更多</button>
+          <button onClick={loadMore} className="w-full py-3 text-sm text-[#007AFF] font-medium">加载更多</button>
         )}
 
         {!loading && !error && goods.length === 0 && (

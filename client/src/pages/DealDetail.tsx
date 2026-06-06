@@ -48,7 +48,7 @@ export default function DealDetail() {
   if (loading) {
     return (
       <div className="flex justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-2 border-[#FF6A00] border-t-transparent" />
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-[#007AFF] border-t-transparent" />
       </div>
     );
   }
@@ -58,14 +58,14 @@ export default function DealDetail() {
       <div className="text-center py-20 text-gray-400">
         <p className="text-4xl mb-3">😢</p>
         <p>好价不存在</p>
-        <Link to="/" className="text-[#FF6A00] text-sm mt-2 inline-block">返回首页</Link>
+        <Link to="/" className="text-[#007AFF] text-sm mt-2 inline-block">返回首页</Link>
       </div>
     );
   }
 
   const platformColorMap: Record<string, string> = {
     '京东': 'bg-red-50 text-red-600',
-    '天猫': 'bg-orange-50 text-[#FF6A00]',
+    '天猫': 'bg-blue-50 text-[#007AFF]',
     '小米商城': 'bg-blue-50 text-blue-600',
     '拼多多': 'bg-green-50 text-green-600',
   };
@@ -87,11 +87,11 @@ export default function DealDetail() {
         <h1 className="text-lg font-bold text-gray-900 leading-snug mb-3">{deal.title}</h1>
 
         <div className="flex items-baseline gap-2 mb-4">
-          <span className="text-3xl font-bold text-[#FF6A00]">¥{deal.price}</span>
+          <span className="text-3xl font-bold text-[#007AFF]">¥{deal.price}</span>
           {deal.original_price > deal.price && (
             <>
               <span className="text-sm text-gray-400 line-through">¥{deal.original_price}</span>
-              <span className="text-xs bg-[#FFF0E0] text-[#FF6A00] px-2 py-0.5 rounded-full">
+              <span className="text-xs bg-blue-50 text-[#007AFF] px-2 py-0.5 rounded-full">
                 -{deal.discount_percent}%
               </span>
             </>
@@ -115,7 +115,7 @@ export default function DealDetail() {
         )}
 
         {deal.coupon_info && (
-          <div className="bg-gradient-to-r from-[#FFF0E0] to-[#FFE4CC] rounded-lg p-3 mb-4 border border-dashed border-[#FFD6A0]">
+          <div className="bg-gradient-to-r from-[#E8F0FE] to-[#D0E0FA] rounded-lg p-3 mb-4 border border-dashed border-blue-200">
             <p className="text-xs text-gray-500 mb-1">优惠券/口令</p>
             <p className="text-sm coupon-code">{deal.coupon_info}</p>
           </div>
@@ -126,7 +126,7 @@ export default function DealDetail() {
             href={deal.source_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="block w-full bg-[#FF6A00] text-white text-center py-3 rounded-lg font-medium mb-4 active:opacity-90"
+            className="block w-full bg-[#007AFF] text-white text-center py-3 rounded-lg font-medium mb-4 active:opacity-90"
           >
             去购买 → {deal.platform || '前往'}
           </a>
@@ -137,7 +137,7 @@ export default function DealDetail() {
             onClick={handleFavorite}
             className={`flex-1 py-2.5 rounded-lg text-sm font-medium border ${
               favorited
-                ? 'bg-[#FFF0E0] text-[#FF6A00] border-[#FFD6A0]'
+                ? 'bg-blue-50 text-[#007AFF] border-blue-200'
                 : 'bg-white text-gray-600 border-gray-200'
             }`}
           >
@@ -163,19 +163,19 @@ export default function DealDetail() {
                 value={commentText}
                 onChange={e => setCommentText(e.target.value)}
                 placeholder="说点什么..."
-                className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#FFD6A0]"
+                className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-200"
                 onKeyDown={e => e.key === 'Enter' && handleComment()}
               />
               <button
                 onClick={handleComment}
                 disabled={!commentText.trim()}
-                className="px-4 py-2 bg-[#FF6A00] text-white rounded-lg text-sm disabled:opacity-50"
+                className="px-4 py-2 bg-[#007AFF] text-white rounded-lg text-sm disabled:opacity-50"
               >
                 发送
               </button>
             </div>
           ) : (
-            <Link to="/login" className="block text-center text-sm text-[#FF6A00] py-3 mb-3 border border-dashed border-gray-200 rounded-lg">
+            <Link to="/login" className="block text-center text-sm text-[#007AFF] py-3 mb-3 border border-dashed border-gray-200 rounded-lg">
               登录后参与评论
             </Link>
           )}

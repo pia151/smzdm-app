@@ -24,7 +24,7 @@ export default function Profile() {
         <p className="text-gray-500 mb-4">登录后查看个人中心</p>
         <Link
           to="/login"
-          className="inline-block bg-[#FF6A00] text-white px-8 py-2.5 rounded-full text-sm"
+          className="inline-block bg-[#007AFF] text-white px-8 py-2.5 rounded-full text-sm"
         >
           去登录
         </Link>
@@ -34,7 +34,7 @@ export default function Profile() {
 
   return (
     <div>
-      <div className="bg-[#FF6A00] px-4 pt-8 pb-12">
+      <div className="bg-[#007AFF] px-4 pt-8 pb-12">
         <div className="flex items-center gap-4">
           <img
             src={user.avatar || ''}

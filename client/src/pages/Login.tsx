@@ -49,7 +49,7 @@ export default function Login() {
         </div>
 
         {error && (
-          <div className="bg-[#FFF0E0] text-[#FF6A00] text-sm p-3 rounded-lg mb-4 text-center">
+          <div className="bg-[#E8F0FE] text-[#007AFF] text-sm p-3 rounded-lg mb-4 text-center">
             {error}
           </div>
         )}
@@ -62,7 +62,7 @@ export default function Login() {
               value={phone}
               onChange={e => setPhone(e.target.value)}
               placeholder="请输入手机号"
-              className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#FFD6A0]"
+              className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-ios-500"
               maxLength={11}
               required
             />
@@ -75,7 +75,7 @@ export default function Login() {
               value={password}
               onChange={e => setPassword(e.target.value)}
               placeholder="请输入密码（至少6位）"
-              className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#FFD6A0]"
+              className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-ios-500"
               minLength={6}
               required
             />
@@ -89,7 +89,7 @@ export default function Login() {
                 value={nickname}
                 onChange={e => setNickname(e.target.value)}
                 placeholder="给自己起个名字吧"
-                className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#FFD6A0]"
+                className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-ios-500"
                 required
               />
             </div>
@@ -98,7 +98,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#FF6A00] text-white py-3 rounded-lg font-medium text-sm active:opacity-90 disabled:opacity-60"
+            className="w-full bg-[#007AFF] text-white py-3 rounded-lg font-medium text-sm active:opacity-90 disabled:opacity-60"
           >
             {loading ? '处理中...' : isRegister ? '注册' : '登录'}
           </button>
@@ -107,7 +107,7 @@ export default function Login() {
         <div className="text-center mt-6">
           <button
             onClick={() => { setIsRegister(!isRegister); setError(''); }}
-            className="text-sm text-[#FF6A00]"
+            className="text-sm text-[#007AFF]"
           >
             {isRegister ? '已有账号？去登录' : '没有账号？去注册'}
           </button>

@@ -37,7 +37,7 @@ export default function JdDetail() {
   if (loading) {
     return (
       <div className="flex justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-2 border-[#FF6A00] border-t-transparent" />
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-[#007AFF] border-t-transparent" />
       </div>
     );
   }
@@ -47,7 +47,7 @@ export default function JdDetail() {
       <div className="text-center py-20 text-gray-400">
         <p className="text-4xl mb-3">😢</p>
         <p>{error || '商品不存在'}</p>
-        <Link to="/jd" className="text-[#FF6A00] text-sm mt-2 inline-block">返回京东精选</Link>
+        <Link to="/jd" className="text-[#007AFF] text-sm mt-2 inline-block">返回京东精选</Link>
       </div>
     );
   }
@@ -69,30 +69,30 @@ export default function JdDetail() {
         <h1 className="text-lg font-bold text-gray-900 leading-snug mb-3">{product.title}</h1>
 
         <div className="flex items-baseline gap-2 mb-2">
-          <span className="text-3xl font-bold text-[#FF6A00]">¥{product.price}</span>
+          <span className="text-3xl font-bold text-[#007AFF]">¥{product.price}</span>
           {product.original_price > product.price && (
             <><span className="text-sm text-gray-400 line-through">¥{product.original_price}</span>
-              <span className="text-xs bg-[#FFF0E0] text-[#FF6A00] px-2 py-0.5 rounded-full">-{Math.round((1 - product.price / product.original_price) * 100)}%</span></>
+              <span className="text-xs bg-blue-50 text-[#007AFF] px-2 py-0.5 rounded-full">-{Math.round((1 - product.price / product.original_price) * 100)}%</span></>
           )}
         </div>
 
         {product.commission_rate > 0 && (
-          <div className="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg p-3 mb-4 border border-orange-100">
+          <div className="bg-gradient-to-r from-blue-50 to-yellow-50 rounded-lg p-3 mb-4 border border-blue-100">
             <div className="flex items-center justify-between">
               <div>
-                <span className="text-sm font-bold text-orange-600">佣金率 {product.commission_rate}%</span>
-                <span className="text-xs text-orange-500 ml-2">预估 ¥{product.commission.toFixed(2)}</span>
+                <span className="text-sm font-bold text-blue-600">佣金率 {product.commission_rate}%</span>
+                <span className="text-xs text-blue-500 ml-2">预估 ¥{product.commission.toFixed(2)}</span>
               </div>
-              <span className="text-xs text-orange-400">推广此商品可赚佣金</span>
+              <span className="text-xs text-blue-400">推广此商品可赚佣金</span>
             </div>
           </div>
         )}
 
         {product.coupon && (
-          <div className="bg-gradient-to-r from-[#FFF0E0] to-[#FFE4CC] rounded-lg p-3 mb-4 border border-dashed border-[#FFD6A0]">
+          <div className="bg-gradient-to-r from-[#E8F0FE] to-[#D0E0FA] rounded-lg p-3 mb-4 border border-dashed border-blue-200">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-bold text-[#FF6A00]">满{product.coupon.quota}减{product.coupon.discount}</span>
-              <span className="text-xs text-[#FF6A00]/60">优惠券</span>
+              <span className="text-sm font-bold text-[#007AFF]">满{product.coupon.quota}减{product.coupon.discount}</span>
+              <span className="text-xs text-[#007AFF]/60">优惠券</span>
             </div>
           </div>
         )}
@@ -109,11 +109,11 @@ export default function JdDetail() {
 
         <div className="space-y-3 mb-4">
           <a href={product.promotion_url || product.jd_url} target="_blank" rel="noopener noreferrer"
-            className="block w-full bg-[#FF6A00] text-white text-center py-3 rounded-lg font-medium active:opacity-90">
+            className="block w-full bg-[#007AFF] text-white text-center py-3 rounded-lg font-medium active:opacity-90">
             去京东购买
           </a>
           <button onClick={handleGetLink} disabled={gettingLink}
-            className="w-full py-2.5 rounded-lg text-sm font-medium border border-[#FFD6A0] bg-[#FFF0E0] text-[#FF6A00] disabled:opacity-50">
+            className="w-full py-2.5 rounded-lg text-sm font-medium border border-blue-200 bg-blue-50 text-[#007AFF] disabled:opacity-50">
             {gettingLink ? '获取中...' : '获取推广链接（赚佣金）'}
           </button>
         </div>

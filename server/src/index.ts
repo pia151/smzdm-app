@@ -17,6 +17,7 @@ import syncRoutes from './routes/sync';
 import aggregateRoutes from './routes/aggregate';
 import alertsRoutes from './routes/alerts';
 import scraperRoutes from './routes/scraper';
+import meituanRoutes from './routes/meituan';
 import { AuthRequest, authMiddleware } from './middleware/auth';
 
 const app = express();
@@ -39,6 +40,7 @@ app.use('/api/sync', syncRoutes);
 app.use('/api/aggregate', aggregateRoutes);
 app.use('/api/alerts', authMiddleware, alertsRoutes);
 app.use('/api/scraper', scraperRoutes);
+app.use('/api/meituan', meituanRoutes);
 
 // 仪表盘统计
 app.get('/api/stats', async (_req, res) => {

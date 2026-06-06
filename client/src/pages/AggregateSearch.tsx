@@ -7,6 +7,7 @@ const PLATFORM_ICONS: Record<string, string> = {
   '天猫': '👑',
   '淘宝': '🛍️',
   '拼多多': '💰',
+  '美团': '🍜',
 };
 
 export default function Search() {
@@ -39,18 +40,18 @@ export default function Search() {
   return (
     <div className="min-h-screen bg-gray-50 max-w-lg mx-auto">
       {/* 搜索头部 */}
-      <div className="bg-[#FF6A00] px-4 pt-4 pb-3">
+      <div className="bg-[#007AFF] px-4 pt-4 pb-3">
         <form onSubmit={handleSearch} className="flex gap-2">
           <input
             type="text"
             value={keyword}
             onChange={e => setKeyword(e.target.value)}
             placeholder="搜索商品、优惠券、羊毛..."
-            className="flex-1 h-10 px-4 rounded-full text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-200"
+            className="flex-1 h-10 px-4 rounded-full text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-ios-200"
           />
           <button
             type="submit"
-            className="h-10 px-5 bg-white text-[#FF6A00] font-semibold rounded-full text-sm shadow-sm"
+            className="h-10 px-5 bg-white text-[#007AFF] font-semibold rounded-full text-sm shadow-sm"
           >
             搜索
           </button>
@@ -70,7 +71,7 @@ export default function Search() {
               onClick={() => setPlatform(p.id)}
               className={`px-3 py-1 rounded-full text-xs whitespace-nowrap ${
                 platform === p.id
-                  ? 'bg-white text-[#FF6A00]'
+                  ? 'bg-white text-[#007AFF]'
                   : 'bg-white/20 text-white'
               }`}
             >
@@ -84,7 +85,7 @@ export default function Search() {
       <div className="px-3 py-3">
         {loading && (
           <div className="flex justify-center py-10">
-            <div className="animate-spin rounded-full h-8 w-8 border-2 border-[#FF6A00] border-t-transparent" />
+            <div className="animate-spin rounded-full h-8 w-8 border-2 border-[#007AFF] border-t-transparent" />
           </div>
         )}
 
@@ -134,7 +135,7 @@ export default function Search() {
 
                       {/* 价格 */}
                       <div className="flex items-baseline gap-2 mt-1">
-                        <span className="text-lg font-bold text-[#FF6A00]">
+                        <span className="text-lg font-bold text-[#007AFF]">
                           ¥{item.price}
                         </span>
                         {item.original_price > item.price && (
@@ -143,7 +144,7 @@ export default function Search() {
                           </span>
                         )}
                         {item.discount > 0 && (
-                          <span className="text-xs bg-[#FFF0E0] text-[#FF6A00] px-1.5 py-0.5 rounded">
+                          <span className="text-xs bg-blue-50 text-[#007AFF] px-1.5 py-0.5 rounded">
                             {item.discount}折
                           </span>
                         )}
@@ -159,7 +160,7 @@ export default function Search() {
 
                       {/* 优惠券 */}
                       {item.coupon && (
-                        <div className="mt-1.5 text-xs bg-orange-50 text-[#FF6A00] px-2 py-0.5 rounded inline-block">
+                        <div className="mt-1.5 text-xs bg-blue-50 text-[#007AFF] px-2 py-0.5 rounded inline-block">
                           🎫 {item.coupon}
                         </div>
                       )}
@@ -171,7 +172,7 @@ export default function Search() {
                             href={item.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex-1 bg-[#FF6A00] text-white text-center py-1.5 rounded-lg text-xs font-medium"
+                            className="flex-1 bg-[#007AFF] text-white text-center py-1.5 rounded-lg text-xs font-medium"
                           >
                             去购买
                           </a>
@@ -186,7 +187,7 @@ export default function Search() {
                               current_price: item.price,
                             }).then(() => alert('已设置降价提醒')).catch(() => {});
                           }}
-                          className="px-3 py-1.5 border border-[#FF6A00] text-[#FF6A00] rounded-lg text-xs"
+                          className="px-3 py-1.5 border border-[#007AFF] text-[#007AFF] rounded-lg text-xs"
                         >
                           🔔提醒
                         </button>

@@ -5,6 +5,7 @@ import { generateId } from '../utils/helpers';
 import { searchGoods as searchJdGoods } from '../utils/jd-union';
 import { searchTaobaoDeals } from '../utils/tb-union';
 import { searchPddDeals } from '../utils/pdd-union';
+import { searchMeituanDeals } from '../utils/mt-union';
 
 const router = Router();
 
@@ -53,9 +54,10 @@ router.get('/search', async (req: AuthRequest, res: Response) => {
     const jdPromise = searchJd(keyword, Number(page), Number(pageSize));
     const tbPromise = searchTb(keyword, Number(page), Number(pageSize));
     const pddPromise = searchPdd(keyword, Number(page), Number(pageSize));
+    const mtPromise = searchMt(keyword, Number(page), Number(pageSize));
 
-    const [jdResult, tbResult, pddResult] = await Promise.allSettled([
-      jdPromise, tbPromise, pddPromise
+    const [jdResult, tbResult, pddResult, mtResult] = await Promise.allSettled([
+      jdPromise, tbPromise, pddPromise, mtPromise
     ]);
 
     if (jdResult.status === 'fulfilled') {
@@ -71,6 +73,11 @@ router.get('/search', async (req: AuthRequest, res: Response) => {
     if (pddResult.status === 'fulfilled') {
       results.push(pddResult.value);
       totalItems = totalItems.concat(pddResult.value.items);
+    }
+
+    if (mtResult.status === 'fulfilled') {
+      results.push(mtResult.value);
+      totalItems = totalItems.concat(mtResult.value.items);
     }
 
     // 按销量和折扣综合排序
@@ -165,6 +172,27 @@ async function searchPdd(keyword: string, page: number, pageSize: number): Promi
   }
 }
 
+// 美团搜索
+async function searchMt(keyword: string, _page: number, _pageSize: number): Promise<PlatformResult> {
+  try {
+    const items = await searchMeituanDeals(keyword);
+    const dealItems: DealItem[] = items.map((item: any) => ({
+      id: item.id,
+      title: item.title,
+      image: item.image || '',
+      price: item.price,
+      original_price: item.original_price,
+      discount: item.discount || 0,
+      sales: item.sales || 0,
+      url: item.url,
+      shop: item.shop || '',
+    }));
+    return { platform: '美团', platform_icon: 'mt', items: dealItems };
+  } catch (e: any) {
+    return { platform: '美团', platform_icon: 'mt', items: [], error: e.message };
+  }
+}
+
 // ============================================
 // 逛丢精选 - 首页多平台聚合好价
 // ============================================
@@ -237,6 +265,7 @@ router.get('/home', async (req: AuthRequest, res: Response) => {
         { id: '天猫', name: '天猫', icon: '👑' },
         { id: '淘宝', name: '淘宝', icon: '🛍️' },
         { id: '拼多多', name: '拼多多', icon: '💰' },
+        { id: '美团', name: '美团', icon: '🍜' },
       ],
     });
   } catch (err: any) {

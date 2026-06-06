@@ -19,7 +19,7 @@ export default function ProductDetail() {
   if (loading) {
     return (
       <div className="flex justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-2 border-[#FF6A00] border-t-transparent" />
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-[#007AFF] border-t-transparent" />
       </div>
     );
   }
@@ -29,7 +29,7 @@ export default function ProductDetail() {
       <div className="text-center py-20 text-gray-400">
         <p className="text-4xl mb-3">😢</p>
         <p>商品不存在</p>
-        <Link to="/" className="text-[#FF6A00] text-sm mt-2 inline-block">返回首页</Link>
+        <Link to="/" className="text-[#007AFF] text-sm mt-2 inline-block">返回首页</Link>
       </div>
     );
   }
@@ -50,11 +50,11 @@ export default function ProductDetail() {
         {product.subtitle && <p className="text-sm text-gray-500 mb-3">{product.subtitle}</p>}
 
         <div className="flex items-baseline gap-2 mb-4">
-          <span className="text-3xl font-bold text-[#FF6A00]">¥{product.current_price}</span>
+          <span className="text-3xl font-bold text-[#007AFF]">¥{product.current_price}</span>
           {product.original_price > product.current_price && (
             <>
               <span className="text-sm text-gray-400 line-through">¥{product.original_price}</span>
-              <span className="text-xs bg-[#FFF0E0] text-[#FF6A00] px-2 py-0.5 rounded-full">-{product.discount}%</span>
+              <span className="text-xs bg-[#E8F0FE] text-[#007AFF] px-2 py-0.5 rounded-full">-{product.discount}%</span>
             </>
           )}
         </div>
@@ -73,7 +73,7 @@ export default function ProductDetail() {
                 const height = ((p.price - minPrice) / (maxPrice - minPrice || 1)) * 80 + 20;
                 return (
                   <div key={i}
-                    className="flex-1 bg-[#FFD6A0] rounded-t"
+                    className="flex-1 bg-ios-500 rounded-t"
                     style={{ height: `${height}%` }}
                     title={`¥${p.price} (${p.date?.slice(0, 10) || ''})`} />
                 );
@@ -95,7 +95,7 @@ export default function ProductDetail() {
               <Link key={deal.id} to={`/deal/${deal.id}`}
                 className="block bg-white rounded-lg p-3 mb-2 border border-gray-100 shadow-sm">
                 <div className="flex items-center gap-2">
-                  <span className="text-base font-bold text-[#FF6A00]">¥{deal.price}</span>
+                  <span className="text-base font-bold text-[#007AFF]">¥{deal.price}</span>
                   {deal.original_price > deal.price && <span className="text-xs text-gray-400 line-through">¥{deal.original_price}</span>}
                   <span className="text-xs text-gray-400">{deal.platform}</span>
                 </div>
